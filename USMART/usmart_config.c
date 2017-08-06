@@ -1,86 +1,66 @@
 #include "usmart.h"
 #include "usmart_str.h"
-////////////////////////////ÓÃ»§ÅäÖÃÇø///////////////////////////////////////////////
-//ÕâÏÂÃæÒª°üº¬ËùÓÃµ½µÄº¯ÊýËùÉêÃ÷µÄÍ·ÎÄ¼þ(ÓÃ»§×Ô¼ºÌí¼Ó) 
-#include "delay.h"	
-#include "usart.h"		
-#include "sys.h" 	
-#include "w25qxx.h"  
-#include "fattester.h" 
+////////////////////////////ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½///////////////////////////////////////////////
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ãµï¿½ï¿½Äºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í·ï¿½Ä¼ï¿½(ï¿½Ã»ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½ï¿½)
+#include "delay.h"
+#include "usart.h"
+#include "sys.h"
+#include "w25qxx.h"
+#include "fattester.h"
 
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½ï¿½Ê¼ï¿½ï¿½(ï¿½Ã»ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½ï¿½)
+//ï¿½Ã»ï¿½Ö±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÒªÖ´ï¿½ÐµÄºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò´ï¿½
+struct _m_usmart_nametab usmart_nametab[] =
+	{
+#if USMART_USE_WRFUNS == 1 //ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½ï¿½Ë¶ï¿½Ð´ï¿½ï¿½ï¿½ï¿½
+		(void *)read_addr, "u32 read_addr(u32 addr)",
+		(void *)write_addr, "void write_addr(u32 addr,u32 val)",
+#endif
+		(void *)delay_ms, "void delay_ms(u16 nms)",
+		(void *)delay_us, "void delay_us(u32 nus)",
 
-//º¯ÊýÃûÁÐ±í³õÊ¼»¯(ÓÃ»§×Ô¼ºÌí¼Ó)
-//ÓÃ»§Ö±½ÓÔÚÕâÀïÊäÈëÒªÖ´ÐÐµÄº¯ÊýÃû¼°Æä²éÕÒ´®
-struct _m_usmart_nametab usmart_nametab[]=
-{
-#if USMART_USE_WRFUNS==1 	//Èç¹ûÊ¹ÄÜÁË¶ÁÐ´²Ù×÷
-	(void*)read_addr,"u32 read_addr(u32 addr)",
-	(void*)write_addr,"void write_addr(u32 addr,u32 val)",	 
-#endif		   
-	(void*)delay_ms,"void delay_ms(u16 nms)",
- 	(void*)delay_us,"void delay_us(u32 nus)", 
+		(void *)W25QXX_Erase_Chip, "void W25QXX_Erase_Chip(void)",
+		(void *)mf_mount, "u8 mf_mount(u8* path,u8 mt)",
+		(void *)mf_open, "u8 mf_open(u8*path,u8 mode)",
+		(void *)mf_close, "u8 mf_close(void)",
+		(void *)mf_read, "u8 mf_read(u16 len)",
+		(void *)mf_write, "u8 mf_write(u8*dat,u16 len)",
+		(void *)mf_opendir, "u8 mf_opendir(u8* path)",
+		(void *)mf_closedir, "u8 mf_closedir(void)",
+		(void *)mf_readdir, "u8 mf_readdir(void)",
+		(void *)mf_scan_files, "u8 mf_scan_files(u8 * path)",
+		(void *)mf_showfree, "u32 mf_showfree(u8 *drv)",
+		(void *)mf_lseek, "u8 mf_lseek(u32 offset)",
+		(void *)mf_tell, "u32 mf_tell(void)",
+		(void *)mf_size, "u32 mf_size(void)",
+		(void *)mf_mkdir, "u8 mf_mkdir(u8*pname)",
+		(void *)mf_fmkfs, "u8 mf_fmkfs(u8* path,u8 mode,u16 au)",
+		(void *)mf_unlink, "u8 mf_unlink(u8 *pname)",
+		(void *)mf_rename, "u8 mf_rename(u8 *oldname,u8* newname)",
+		(void *)mf_getlabel, "void mf_getlabel(u8 *path)",
+		(void *)mf_setlabel, "void mf_setlabel(u8 *path)",
+		(void *)mf_gets, "void mf_gets(u16 size)",
+		(void *)mf_putc, "u8 mf_putc(u8 c)",
+		(void *)mf_puts, "u8 mf_puts(u8*c)",
+};
 
-	(void*)W25QXX_Erase_Chip,"void W25QXX_Erase_Chip(void)", 
-	(void*)mf_mount,"u8 mf_mount(u8* path,u8 mt)", 
-	(void*)mf_open,"u8 mf_open(u8*path,u8 mode)", 
-	(void*)mf_close,"u8 mf_close(void)", 
-	(void*)mf_read,"u8 mf_read(u16 len)", 
-	(void*)mf_write,"u8 mf_write(u8*dat,u16 len)", 
-	(void*)mf_opendir,"u8 mf_opendir(u8* path)", 
-	(void*)mf_closedir,"u8 mf_closedir(void)", 
-	(void*)mf_readdir,"u8 mf_readdir(void)", 
-	(void*)mf_scan_files,"u8 mf_scan_files(u8 * path)", 
-	(void*)mf_showfree,"u32 mf_showfree(u8 *drv)", 
-	(void*)mf_lseek,"u8 mf_lseek(u32 offset)", 
-	(void*)mf_tell,"u32 mf_tell(void)", 
-	(void*)mf_size,"u32 mf_size(void)", 
-	(void*)mf_mkdir,"u8 mf_mkdir(u8*pname)", 
-	(void*)mf_fmkfs,"u8 mf_fmkfs(u8* path,u8 mode,u16 au)", 
-	(void*)mf_unlink,"u8 mf_unlink(u8 *pname)", 
-	(void*)mf_rename,"u8 mf_rename(u8 *oldname,u8* newname)", 
-	(void*)mf_getlabel,"void mf_getlabel(u8 *path)", 
-	(void*)mf_setlabel,"void mf_setlabel(u8 *path)", 
-	(void*)mf_gets,"void mf_gets(u16 size)", 
-	(void*)mf_putc,"u8 mf_putc(u8 c)", 
-	(void*)mf_puts,"u8 mf_puts(u8*c)", 		
-};						
-					  
 ///////////////////////////////////END///////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
-//º¯Êý¿ØÖÆ¹ÜÀíÆ÷³õÊ¼»¯
-//µÃµ½¸÷¸öÊÜ¿Øº¯ÊýµÄÃû×Ö
-//µÃµ½º¯Êý×ÜÊýÁ¿
-struct _m_usmart_dev usmart_dev=
-{
-	usmart_nametab,
-	usmart_init,
-	usmart_cmd_rec,
-	usmart_exe,
-	usmart_scan,
-	sizeof(usmart_nametab)/sizeof(struct _m_usmart_nametab),//º¯ÊýÊýÁ¿
-	0,	  	//²ÎÊýÊýÁ¿
-	0,	 	//º¯ÊýID
-	1,		//²ÎÊýÏÔÊ¾ÀàÐÍ,0,10½øÖÆ;1,16½øÖÆ
-	0,		//²ÎÊýÀàÐÍ.bitx:,0,Êý×Ö;1,×Ö·û´®	    
-	0,	  	//Ã¿¸ö²ÎÊýµÄ³¤¶ÈÔÝ´æ±í,ÐèÒªMAX_PARM¸ö0³õÊ¼»¯
-	0,		//º¯ÊýµÄ²ÎÊý,ÐèÒªPARM_LEN¸ö0³õÊ¼»¯
-};   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½
+//ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü¿Øºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+struct _m_usmart_dev usmart_dev =
+	{
+		usmart_nametab,
+		usmart_init,
+		usmart_cmd_rec,
+		usmart_exe,
+		usmart_scan,
+		sizeof(usmart_nametab) / sizeof(struct _m_usmart_nametab), //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		0,														   //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		0,														   //ï¿½ï¿½ï¿½ï¿½ID
+		1,														   //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½,0,10ï¿½ï¿½ï¿½ï¿½;1,16ï¿½ï¿½ï¿½ï¿½
+		0,														   //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.bitx:,0,ï¿½ï¿½ï¿½ï¿½;1,ï¿½Ö·ï¿½ï¿½ï¿½
+		0,														   //Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä³ï¿½ï¿½ï¿½ï¿½Ý´ï¿½ï¿½,ï¿½ï¿½ÒªMAX_PARMï¿½ï¿½0ï¿½ï¿½Ê¼ï¿½ï¿½
+		0,														   //ï¿½ï¿½ï¿½ï¿½ï¿½Ä²ï¿½ï¿½ï¿½,ï¿½ï¿½ÒªPARM_LENï¿½ï¿½0ï¿½ï¿½Ê¼ï¿½ï¿½
+};

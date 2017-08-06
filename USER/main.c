@@ -12,12 +12,6 @@
 #include "w25qxx.h"
 #include "ff.h"
 #include "exfuns.h"
-//ALIENTEK 探索者STM32F407开发板 实验39
-//FATFS 实验 -库函数版本
-//技术支持：www.openedv.com
-//淘宝店铺：http://eboard.taobao.com
-//广州市星翼电子科技有限公司
-//作者：正点原子 @ALIENTEK
 
 int main(void)
 {
@@ -36,12 +30,14 @@ int main(void)
 	my_mem_init(SRAMIN);							//初始化内部内存池
 	my_mem_init(SRAMCCM);							//初始化CCM内存池
 
+	/*
 	POINT_COLOR = RED; //设置字体为红色
 	LCD_ShowString(30, 50, 200, 16, 16, "Explorer STM32F4");
 	LCD_ShowString(30, 70, 200, 16, 16, "FATFS TEST");
 	LCD_ShowString(30, 90, 200, 16, 16, "ATOM@ALIENTEK");
 	LCD_ShowString(30, 110, 200, 16, 16, "2014/5/15");
 	LCD_ShowString(30, 130, 200, 16, 16, "Use USMART for test");
+	*/
 	while (SD_Init()) //检测不到SD卡
 	{
 		LCD_ShowString(30, 150, 200, 16, 16, "SD Card Error!");
