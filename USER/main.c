@@ -3,6 +3,7 @@
 #include "rtc.h"
 #include "delay.h"
 #include "usart.h"
+#include "rtc.h"
 #include "led.h"
 #include "lcd.h"
 #include "key.h"
@@ -23,13 +24,13 @@ int main(void)
 	/* Init all the peripherial */
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2); //设置系统中断优先级分组2
 	delay_init(168);								//初始化延时函数
+	RTC_Init();
 	uart_init(115200);								//初始化串口波特率为115200
 	LED_Init();										//初始化LED
 	usmart_dev.init(84);							//初始化USMART
 	LCD_Init();										//LCD初始化
 	KEY_Init();										//按键初始化
 	W25QXX_Init();									//初始化W25Q128
-	rtc_init();
 	my_mem_init(SRAMIN);							//初始化内部内存池
 	my_mem_init(SRAMCCM);							//初始化CCM内存池
 

@@ -15,3 +15,5 @@ USER/JLinkLog.txt
 *.Darren
 
 *.orig
+
+.vscode
