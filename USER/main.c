@@ -1,4 +1,6 @@
+#include "config.h"
 #include "sys.h"
+#include "rtc.h"
 #include "delay.h"
 #include "usart.h"
 #include "led.h"
@@ -18,7 +20,7 @@ int main(void)
 	u32 total, free;
 	u8 t = 0;
 	u8 res = 0;
-
+	/* Init all the peripherial */
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2); //设置系统中断优先级分组2
 	delay_init(168);								//初始化延时函数
 	uart_init(115200);								//初始化串口波特率为115200
@@ -27,17 +29,18 @@ int main(void)
 	LCD_Init();										//LCD初始化
 	KEY_Init();										//按键初始化
 	W25QXX_Init();									//初始化W25Q128
+	rtc_init();
 	my_mem_init(SRAMIN);							//初始化内部内存池
 	my_mem_init(SRAMCCM);							//初始化CCM内存池
 
-	/*
+	exfuns_init();				   //为fatfs相关变量申请内存
+	/*Init SD card */
 	POINT_COLOR = RED; //设置字体为红色
 	LCD_ShowString(30, 50, 200, 16, 16, "Explorer STM32F4");
 	LCD_ShowString(30, 70, 200, 16, 16, "FATFS TEST");
 	LCD_ShowString(30, 90, 200, 16, 16, "ATOM@ALIENTEK");
 	LCD_ShowString(30, 110, 200, 16, 16, "2014/5/15");
 	LCD_ShowString(30, 130, 200, 16, 16, "Use USMART for test");
-	*/
 	while (SD_Init()) //检测不到SD卡
 	{
 		LCD_ShowString(30, 150, 200, 16, 16, "SD Card Error!");
@@ -46,8 +49,12 @@ int main(void)
 		delay_ms(500);
 		LED0 = !LED0; //DS0闪烁
 	}
-	exfuns_init();				   //为fatfs相关变量申请内存
 	f_mount(fs[0], "0:", 1);	   //挂载SD卡
+
+
+
+/*
+
 	res = f_mount(fs[1], "1:", 1); //挂载FLASH.
 	if (res == 0X0D)			   //FLASH磁盘,FAT文件系统错误,重新格式化FLASH
 	{
@@ -83,4 +90,5 @@ int main(void)
 		delay_ms(200);
 		LED0 = !LED0;
 	}
+*/
 }
