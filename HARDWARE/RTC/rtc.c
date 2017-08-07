@@ -1,4 +1,5 @@
 #include "rtc.h"
+#include "delay.h"
 
 NVIC_InitTypeDef NVIC_InitStructure;
 
@@ -27,9 +28,9 @@ ErrorStatus rtc_set_date(calendar_obj cal)
 
 ErrorStatus rtc_set_cal(calendar_obj cal)
 {
-	if (RTC_Set_Time(cal) == ERROR)
+	if (rtc_set_time(cal) == ERROR)
 		return ERROR;
-	if (RTC_Set_Date(cal) == ERROR)
+	if (rtc_set_date(cal) == ERROR)
 		return ERROR;
 	PWR_BackupAccessCmd(ENABLE);
 	RTC_WriteBackupRegister(RTC_BKP_DR1, 0xDEADBEEF); // RTC has been set already
@@ -45,10 +46,12 @@ ErrorStatus update_current_calendar()
 	current_calendar.month = RTC_DateTypeInitStructure.RTC_Month;
 	current_calendar.week = RTC_DateTypeInitStructure.RTC_WeekDay;
 	current_calendar.year = RTC_DateTypeInitStructure.RTC_Year;
-	RTC_GsetTime(RTC_Format_BIN, &RTC_DateTypeInitStructure);
-	current_calendar.hour = RTC_DateTypeInitStructure.RTC_Hours;
-	current_calendar.min = RTC_DateTypeInitStructure.RTC_Minutes;
-	current_calendar.sec = RTC_DateTypeInitStructure.RTC_Seconds;
+	RTC_TimeTypeDef RTC_TimeTypeInitStructure;
+	RTC_GetTime(RTC_Format_BIN, &RTC_TimeTypeInitStructure);
+	current_calendar.hour = RTC_TimeTypeInitStructure.RTC_Hours;
+	current_calendar.min = RTC_TimeTypeInitStructure.RTC_Minutes;
+	current_calendar.sec = RTC_TimeTypeInitStructure.RTC_Seconds;
+    return SUCCESS;
 }
 
 calendar_obj* get_current_calendar()
@@ -59,7 +62,7 @@ calendar_obj* get_current_calendar()
 
 u8 is_calendar_initialized()
 {
-	if (RTC_ReadBackupRegister(BTC_BKP_DR1) == 0xDEADBEEF)
+	if (RTC_ReadBackupRegister(RTC_BKP_DR1) == 0xDEADBEEF)
 		return TRUE;
 	else
 		return FALSE;
@@ -69,7 +72,7 @@ u8 is_calendar_initialized()
 //返回值:0,初始化成功;
 //       1,LSE开启失败;
 //       2,进入初始化模式失败;
-u8 RTC_Init(void)
+u8 rtc_init(void)
 {
 	RTC_InitTypeDef RTC_InitStructure;
 	u16 retry = 0X1FFF;
@@ -99,7 +102,7 @@ u8 RTC_Init(void)
 //设置闹钟时间(按星期闹铃,24小时制)
 //week:星期几(1~7) @ref  RTC_Alarm_Definitions
 //hour,min,sec:小时,分钟,秒钟
-void RTC_Set_AlarmA(u8 week, u8 hour, u8 min, u8 sec)
+void rtc_set_alarmA(u8 week, u8 hour, u8 min, u8 sec)
 {
 	EXTI_InitTypeDef EXTI_InitStructure;
 	RTC_AlarmTypeDef RTC_AlarmTypeInitStructure;
@@ -147,7 +150,7 @@ void RTC_Set_AlarmA(u8 week, u8 hour, u8 min, u8 sec)
 #define RTC_WakeUpClock_CK_SPRE_17bits      ((uint32_t)0x00000006)
 */
 //cnt:自动重装载值.减到0,产生中断.
-void RTC_Set_WakeUp(u32 wksel, u16 cnt)
+void rtc_set_wake_up(u32 wksel, u16 cnt)
 {
 	EXTI_InitTypeDef EXTI_InitStructure;
 
@@ -176,7 +179,7 @@ void RTC_Set_WakeUp(u32 wksel, u16 cnt)
 	NVIC_Init(&NVIC_InitStructure);								 //配置
 }
 
-u8 Is_Leap_Year(u16 year)
+u8 is_leap_year(u16 year)
 {
 	if (year % 4 == 0) //必须能被4整除
 	{
@@ -192,27 +195,4 @@ u8 Is_Leap_Year(u16 year)
 	}
 	else
 		return 0;
-}
-
-//获得现在是星期几
-//功能描述:输入公历日期得到星期(只允许1901-2099年)
-//输入参数：公历年月日
-//返回值：星期号
-u8 RTC_Get_Week(u16 year, u8 month, u8 day)
-{
-	u16 temp2;
-	u8 yearH, yearL;
-
-	yearH = year / 100;
-	yearL = year % 100;
-	// 如果为21世纪,年份数加100
-	if (yearH > 19)
-		yearL += 100;
-	// 所过闰年数只算1900年之后的
-	temp2 = yearL + yearL / 4;
-	temp2 = temp2 % 7;
-	temp2 = temp2 + day + table_week[month - 1];
-	if (yearL % 4 == 0 && month < 3)
-		temp2--;
-	return (temp2 % 7);
 }

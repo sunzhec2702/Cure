@@ -8,3 +8,4 @@ u16 value_restore_func(u8 reg_index, u8 offset, u16 len_mask);
 
 
 #endif
+

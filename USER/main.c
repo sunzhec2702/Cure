@@ -24,7 +24,7 @@ int main(void)
 	/* Init all the peripherial */
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2); //设置系统中断优先级分组2
 	delay_init(168);								//初始化延时函数
-	RTC_Init();
+	rtc_init();
 	uart_init(115200);								//初始化串口波特率为115200
 	LED_Init();										//初始化LED
 	usmart_dev.init(84);							//初始化USMART
