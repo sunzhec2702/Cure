@@ -33,6 +33,7 @@ ErrorStatus rtc_set_cal(calendar_obj cal)
 	if (rtc_set_date(cal) == ERROR)
 		return ERROR;
 	PWR_BackupAccessCmd(ENABLE);
+	// Here we update the RTC flag.
 	RTC_WriteBackupRegister(RTC_BKP_DR1, 0xDEADBEEF); // RTC has been set already
 	PWR_BackupAccessCmd(DISABLE);
 	return SUCCESS;

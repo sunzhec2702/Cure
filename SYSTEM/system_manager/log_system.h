@@ -1,5 +1,8 @@
 #ifndef __LOG_SYSTEM_H__
 #define __LOG_SYSTEM_H__
+#include "sys.h"
+#include "rtc.h"
+
 
 /* We should update the use time by adding some delta time.
 Once we power on the system, the enable flag is false until the button is pressed.
@@ -11,8 +14,17 @@ TODO: log more often. Summary to variable and update rarely.
 
 /* Compare current time and start time to update the daily_use_time and total_use_time */
 
+typedef struct
+{
+
+}
+
+
 extern void update_daily_use_time(void);
 extern void update_total_use_time(void);
 
+// Create the log file according to the current date.
+extern void log_system_init(void);
+extern void 
 
 #endif
