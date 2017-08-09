@@ -51,7 +51,7 @@ int main(void)
 		LED0 = !LED0; //DS0…¡À∏
 	}
 	f_mount(fs[0], "0:", 1);	   //π“‘ÿSDø®
-
+	log_system_init();
 
 
 /*

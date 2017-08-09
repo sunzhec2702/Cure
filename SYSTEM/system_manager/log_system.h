@@ -14,17 +14,12 @@ TODO: log more often. Summary to variable and update rarely.
 
 /* Compare current time and start time to update the daily_use_time and total_use_time */
 
-typedef struct
-{
-
-}
-
-
 extern void update_daily_use_time(void);
 extern void update_total_use_time(void);
 
 // Create the log file according to the current date.
 extern void log_system_init(void);
-extern void 
+extern ErrorStatus update_output_log(void);
+extern void print_debug_log(char *message);
 
 #endif

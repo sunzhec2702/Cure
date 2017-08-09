@@ -2,6 +2,7 @@
 #include "delay.h"
 
 NVIC_InitTypeDef NVIC_InitStructure;
+#define RTC_DEBUG 1
 
 static calendar_obj current_calendar;
 
@@ -63,6 +64,9 @@ calendar_obj* get_current_calendar()
 
 u8 is_calendar_initialized()
 {
+	#ifdef RTC_DEBUG
+		return TRUE;
+	#endif
 	if (RTC_ReadBackupRegister(RTC_BKP_DR1) == 0xDEADBEEF)
 		return TRUE;
 	else
