@@ -15,6 +15,7 @@
 #include "w25qxx.h"
 #include "ff.h"
 #include "exfuns.h"
+#include "log_system.h"
 
 int main(void)
 {
@@ -54,9 +55,7 @@ int main(void)
 	log_system_init();
 
 
-/*
-
-	res = f_mount(fs[1], "1:", 1); //挂载FLASH.
+    res = f_mount(fs[1], "1:", 1); //挂载FLASH.
 	if (res == 0X0D)			   //FLASH磁盘,FAT文件系统错误,重新格式化FLASH
 	{
 		LCD_ShowString(30, 150, 200, 16, 16, "Flash Disk Formatting..."); //格式化FLASH
@@ -88,8 +87,8 @@ int main(void)
 	while (1)
 	{
 		t++;
-		delay_ms(200);
+		delay_ms(1000);
 		LED0 = !LED0;
+        update_output_log();
 	}
-*/
 }

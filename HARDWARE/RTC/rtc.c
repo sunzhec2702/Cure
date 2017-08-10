@@ -99,8 +99,19 @@ u8 rtc_init(void)
 		RTC_InitStructure.RTC_SynchPrediv = 0xFF;			  //RTC同步分频系数(0~7FFF)
 		RTC_InitStructure.RTC_HourFormat = RTC_HourFormat_24; //RTC设置为,24小时格式
 		RTC_Init(&RTC_InitStructure);
+        #ifdef RTC_DEBUG
+        calendar_obj temp;
+        temp.year = 17;
+        temp.month = 8;
+        temp.date = 10;
+        temp.hour = 23;
+        temp.min = 14;
+        temp.sec = 30;
+        rtc_set_cal(temp);
+        #endif
 		RTC_WriteBackupRegister(RTC_BKP_DR0, 0x5050); //标记已经初始化过了
-	} 
+	}
+    PWR_BackupAccessCmd(DISABLE);
 	return 0;
 }
 

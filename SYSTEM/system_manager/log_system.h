@@ -18,7 +18,7 @@ extern void update_daily_use_time(void);
 extern void update_total_use_time(void);
 
 // Create the log file according to the current date.
-extern void log_system_init(void);
+extern ErrorStatus log_system_init(void);
 extern ErrorStatus update_output_log(void);
 extern void print_debug_log(char *message);
 
