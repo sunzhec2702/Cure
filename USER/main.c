@@ -86,9 +86,15 @@ int main(void)
 	LCD_ShowNum(30 + 8 * 14, 190, free >> 10, 5, 16);  //œ‘ æSDø® £”‡»›¡ø MB
 	while (1)
 	{
+		u8 status = OUTPUT_DISABLE;
 		t++;
 		delay_ms(1000);
 		LED0 = !LED0;
-        update_output_log();
+        record_update_output_log();
+		if (t % 20 == 0)
+		{
+            status = !status;
+			record_update_output_status(status);
+		}
 	}
 }

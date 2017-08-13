@@ -12,7 +12,7 @@
 typedef enum
 {
     OUTPUT_ENABLE = 0,
-    OUTPUT_DISABLE;
+    OUTPUT_DISABLE,
 } output_status;
 
 /* We should update the use time by adding some delta time.
@@ -34,7 +34,7 @@ typedef struct
     u32 total_time; //total time used today.
     calendar_obj date_info; // record today's info.
     u32 use_count; // How many time has been used. stop/start is counted as one time.
-    single_use_time_t single_use[0]; // to record the start/end time for a single use.
+    //single_use_time_t single_use[0]; // to record the start/end time for a single use.
 } daily_use_time_t;
 
 typedef struct
@@ -43,16 +43,15 @@ typedef struct
     u8 min;
     u8 sec;
 } hour_min_sec;
+
 /* Compare current time and start time to update the daily_use_time and total_use_time */
 
-extern void update_daily_use_time(void);
-extern void update_total_use_time(void);
+
 
 // Create the log file according to the current date.
 extern ErrorStatus log_system_init(void);
 extern void close_all_files(void);
-extern ErrorStatus update_output_log(void);
-extern ErrorStatus update_record_status(output_status status);
+extern ErrorStatus record_update_output_log(void);
+extern ErrorStatus record_update_output_status(output_status status);
 extern ErrorStatus print_debug_log(char *message);
-extern u32 time_to_seconds(calendar_obj *cal);
 #endif
